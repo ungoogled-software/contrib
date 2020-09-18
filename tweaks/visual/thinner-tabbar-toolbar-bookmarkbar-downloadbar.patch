@@ -1,0 +1,94 @@
+## This patch makes the tabbar, toolbar, bookmarkbar, and downloadbar thinner.  
+#
+# These are the values that I'm comfortable with, adjust to your liking.  
+#
+# Even though the download items are set to 24px, that's really a minimum.  
+# Their height is based on the height of two rows of text using your current
+# font, so that could vary depending on your settings.  
+
+--- a/chrome/browser/ui/views/download/download_item_view.cc
++++ b/chrome/browser/ui/views/download/download_item_view.cc
+@@ -120,14 +120,14 @@
+ 
+ // The vertical distance between the item's visual upper bound (as delineated
+ // by the separator on the right) and the edge of the shelf.
+-constexpr int kTopBottomPadding = 6;
++constexpr int kTopBottomPadding = 0;
+ 
+ // The minimum vertical padding above and below contents of the download item.
+ // This is only used when the text size is large.
+ constexpr int kMinimumVerticalPadding = 2 + kTopBottomPadding;
+ 
+ // The normal height of the item which may be exceeded if text is large.
+-constexpr int kDefaultDownloadItemHeight = 48;
++constexpr int kDefaultDownloadItemHeight = 24;
+ 
+ // Amount of time between accessible alert events.
+ constexpr auto kAccessibleAlertInterval = base::TimeDelta::FromSeconds(30);
+--- a/chrome/browser/ui/layout_constants.cc
++++ b/chrome/browser/ui/layout_constants.cc
+@@ -33,13 +33,13 @@
+     case BOOKMARK_BAR_HEIGHT:
+       // The fixed margin ensures the bookmark buttons appear centered relative
+       // to the white space above and below.
+-      static constexpr int kBookmarkBarAttachedVerticalMargin = 4;
++      static constexpr int kBookmarkBarAttachedVerticalMargin = 0;
+       return GetLayoutConstant(BOOKMARK_BAR_BUTTON_HEIGHT) +
+              kBookmarkBarAttachedVerticalMargin;
+     case BOOKMARK_BAR_BUTTON_HEIGHT:
+-      return touch_ui ? 36 : 28;
++      return touch_ui ? 36 : 24;
+     case BOOKMARK_BAR_NTP_HEIGHT:
+-      return touch_ui ? GetLayoutConstant(BOOKMARK_BAR_HEIGHT) : 39;
++      return touch_ui ? GetLayoutConstant(BOOKMARK_BAR_HEIGHT) : 27;
+     case WEB_APP_MENU_BUTTON_SIZE:
+       return 24;
+     case WEB_APP_PAGE_ACTION_ICON_SIZE:
+@@ -47,17 +47,17 @@
+       // stretching the container view.
+       return 16;
+     case LOCATION_BAR_BUBBLE_FONT_VERTICAL_PADDING:
+-      return 2;
++      return 0;
+     case LOCATION_BAR_BUBBLE_ANCHOR_VERTICAL_INSET:
+       return 1;
+     case LOCATION_BAR_CHILD_INTERIOR_PADDING:
+-      return 3;
++      return 1;
+     case LOCATION_BAR_ELEMENT_PADDING:
+       return touch_ui ? 3 : 2;
+     case LOCATION_BAR_HEIGHT:
+       if (OmniboxFieldTrial::RichAutocompletionTwoLineOmnibox())
+         return touch_ui ? 52 : 40;
+-      return touch_ui ? 36 : 28;
++      return touch_ui ? 36 : 24;
+     case LOCATION_BAR_ICON_SIZE:
+       return touch_ui ? 20 : 16;
+     case TAB_AFTER_TITLE_PADDING:
+@@ -67,7 +67,7 @@
+     case TAB_ALERT_INDICATOR_ICON_WIDTH:
+       return touch_ui ? 12 : 16;
+     case TAB_HEIGHT:
+-      return (touch_ui ? 41 : 34) + GetLayoutConstant(TABSTRIP_TOOLBAR_OVERLAP);
++      return (touch_ui ? 41 : 30) + GetLayoutConstant(TABSTRIP_TOOLBAR_OVERLAP);
+     case TAB_PRE_TITLE_PADDING:
+       return 8;
+     case TAB_STACK_DISTANCE:
+@@ -75,7 +75,7 @@
+     case TABSTRIP_TOOLBAR_OVERLAP:
+       return 1;
+     case TOOLBAR_BUTTON_HEIGHT:
+-      return touch_ui ? 48 : 28;
++      return touch_ui ? 48 : 24;
+     case TOOLBAR_ELEMENT_PADDING:
+       return touch_ui ? 0 : 4;
+     case TOOLBAR_STANDARD_SPACING:
+@@ -103,7 +103,7 @@
+     }
+ 
+     case TOOLBAR_INTERIOR_MARGIN:
+-      return touch_ui ? gfx::Insets() : gfx::Insets(4, 8);
++      return touch_ui ? gfx::Insets() : gfx::Insets(0, 8);
+   }
+   NOTREACHED();
+   return gfx::Insets();

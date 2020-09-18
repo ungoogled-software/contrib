@@ -1,0 +1,20 @@
+## This patch sets a minimum opacity for scrollbars.  
+# 
+# I use the OverlayScrollbar feature flag, and enjoy the aesthetic except for
+# the fact that the scrollbar disappears completely.  Being able to see the bar
+# slightly helps to visulize your position on the page as well as letting you
+# know where to move your mouse should you go reaching for it.  
+#
+# I use 0.15 here, but you can adjust that to your liking.  
+
+--- a/cc/input/scrollbar_animation_controller.cc
++++ b/cc/input/scrollbar_animation_controller.cc
+@@ -362,6 +362,8 @@
+ }
+ 
+ void ScrollbarAnimationController::ApplyOpacityToScrollbars(float opacity) {
++  if (opacity < 0.15f)
++    opacity = 0.15f;
+   for (ScrollbarLayerImplBase* scrollbar : Scrollbars()) {
+     DCHECK(scrollbar->is_overlay_scrollbar());
+     float effective_opacity = scrollbar->CanScrollOrientation() ? opacity : 0;
