@@ -1,0 +1,362 @@
+# Provides an experiance closer to macOS in Linux for shortcut keys
+diff --git a/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc b/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+index 4995b3c75c44..a4014f0482c5 100644
+--- a/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
++++ b/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+@@ -140,39 +140,39 @@ bool RenderViewContextMenuViews::GetAcceleratorForCommandId(
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_UNDO:
+-      *accel = ui::Accelerator(ui::VKEY_Z, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_Z, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_REDO:
+       // TODO(jcampan): should it be Ctrl-Y?
+       *accel = ui::Accelerator(ui::VKEY_Z,
+-                               ui::EF_SHIFT_DOWN | ui::EF_CONTROL_DOWN);
++                               ui::EF_SHIFT_DOWN | ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_CUT:
+-      *accel = ui::Accelerator(ui::VKEY_X, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_X, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_COPY:
+-      *accel = ui::Accelerator(ui::VKEY_C, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_C, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_INSPECTELEMENT:
+       *accel = ui::Accelerator(ui::VKEY_I,
+-                               ui::EF_SHIFT_DOWN | ui::EF_CONTROL_DOWN);
++                               ui::EF_SHIFT_DOWN | ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_PASTE:
+-      *accel = ui::Accelerator(ui::VKEY_V, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_V, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_PASTE_AND_MATCH_STYLE:
+       *accel = ui::Accelerator(ui::VKEY_V,
+-                               ui::EF_SHIFT_DOWN | ui::EF_CONTROL_DOWN);
++                               ui::EF_SHIFT_DOWN | ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_SELECTALL:
+-      *accel = ui::Accelerator(ui::VKEY_A, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_A, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_ROTATECCW:
+@@ -188,16 +188,16 @@ bool RenderViewContextMenuViews::GetAcceleratorForCommandId(
+       return true;
+ 
+     case IDC_PRINT:
+-      *accel = ui::Accelerator(ui::VKEY_P, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_P, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_RELOAD:
+-      *accel = ui::Accelerator(ui::VKEY_R, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_R, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_SAVEAVAS:
+     case IDC_SAVE_PAGE:
+-      *accel = ui::Accelerator(ui::VKEY_S, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_S, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_EXIT_FULLSCREEN: {
+diff --git a/chrome/common/extensions/command.cc b/chrome/common/extensions/command.cc
+index 4732019d473a..aa07642f4070 100644
+--- a/chrome/common/extensions/command.cc
++++ b/chrome/common/extensions/command.cc
+@@ -103,7 +103,7 @@ ui::Accelerator ParseImpl(const std::string& accelerator,
+         // Mac the developer has to specify MacCtrl). Therefore we treat this
+         // as Command.
+         modifiers |= ui::EF_COMMAND_DOWN;
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+       } else if (platform_key == values::kKeybindingPlatformDefault) {
+         // If we see "Command+foo" in the Default section it can mean two
+         // things, depending on the platform:
+diff --git a/content/renderer/pepper/pepper_plugin_instance_impl.cc b/content/renderer/pepper/pepper_plugin_instance_impl.cc
+index d59a7ed97051..c40238bf113c 100644
+--- a/content/renderer/pepper/pepper_plugin_instance_impl.cc
++++ b/content/renderer/pepper/pepper_plugin_instance_impl.cc
+@@ -1503,7 +1503,7 @@ void PepperPluginInstanceImpl::SelectAll() {
+ 
+   // TODO(https://crbug.com/836074) |kPlatformModifier| should be
+   // |ui::EF_PLATFORM_ACCELERATOR| (|ui::EF_COMMAND_DOWN| on Mac).
+-  static const ui::EventFlags kPlatformModifier = ui::EF_CONTROL_DOWN;
++  static const ui::EventFlags kPlatformModifier = ui::EF_COMMAND_DOWN;
+   // Synthesize a ctrl + a key event to send to the plugin and let it sort out
+   // the event. See also https://crbug.com/739529.
+   ui::KeyEvent char_event(L'A', ui::VKEY_A, ui::DomCode::NONE,
+diff --git a/third_party/blink/renderer/core/editing/editing_behavior.cc b/third_party/blink/renderer/core/editing/editing_behavior.cc
+index e3585bdb1eac..cdd1bb8c475e 100644
+--- a/third_party/blink/renderer/core/editing/editing_behavior.cc
++++ b/third_party/blink/renderer/core/editing/editing_behavior.cc
+@@ -45,7 +45,7 @@ const unsigned kCtrlKey = WebInputEvent::kControlKey;
+ const unsigned kAltKey = WebInputEvent::kAltKey;
+ const unsigned kShiftKey = WebInputEvent::kShiftKey;
+ const unsigned kMetaKey = WebInputEvent::kMetaKey;
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+ // Aliases for the generic key defintions to make kbd shortcuts definitions more
+ // readable on OS X.
+ const unsigned kOptionKey = kAltKey;
+@@ -88,7 +88,7 @@ struct DomKeyKeyDownEntry {
+ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+     {VKEY_LEFT, 0, "MoveLeft"},
+     {VKEY_LEFT, kShiftKey, "MoveLeftAndModifySelection"},
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+     {VKEY_LEFT, kOptionKey, "MoveWordLeft"},
+     {VKEY_LEFT, kOptionKey | kShiftKey, "MoveWordLeftAndModifySelection"},
+ #else
+@@ -97,7 +97,7 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+ #endif
+     {VKEY_RIGHT, 0, "MoveRight"},
+     {VKEY_RIGHT, kShiftKey, "MoveRightAndModifySelection"},
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+     {VKEY_RIGHT, kOptionKey, "MoveWordRight"},
+     {VKEY_RIGHT, kOptionKey | kShiftKey, "MoveWordRightAndModifySelection"},
+ #else
+@@ -110,7 +110,7 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+     {VKEY_DOWN, 0, "MoveDown"},
+     {VKEY_DOWN, kShiftKey, "MoveDownAndModifySelection"},
+     {VKEY_NEXT, kShiftKey, "MovePageDownAndModifySelection"},
+-#if !defined(OS_MAC)
++#if !defined(OS_MAC) && !defined(OS_LINUX)
+     {VKEY_UP, kCtrlKey, "MoveParagraphBackward"},
+     {VKEY_UP, kCtrlKey | kShiftKey, "MoveParagraphBackwardAndModifySelection"},
+     {VKEY_DOWN, kCtrlKey, "MoveParagraphForward"},
+@@ -120,18 +120,18 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+ #endif
+     {VKEY_HOME, 0, "MoveToBeginningOfLine"},
+     {VKEY_HOME, kShiftKey, "MoveToBeginningOfLineAndModifySelection"},
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+     {VKEY_PRIOR, kOptionKey, "MovePageUp"},
+     {VKEY_NEXT, kOptionKey, "MovePageDown"},
+ #endif
+-#if !defined(OS_MAC)
++#if !defined(OS_MAC) && !defined(OS_LINUX)
+     {VKEY_HOME, kCtrlKey, "MoveToBeginningOfDocument"},
+     {VKEY_HOME, kCtrlKey | kShiftKey,
+      "MoveToBeginningOfDocumentAndModifySelection"},
+ #endif
+     {VKEY_END, 0, "MoveToEndOfLine"},
+     {VKEY_END, kShiftKey, "MoveToEndOfLineAndModifySelection"},
+-#if !defined(OS_MAC)
++#if !defined(OS_MAC) && !defined(OS_LINUX)
+     {VKEY_END, kCtrlKey, "MoveToEndOfDocument"},
+     {VKEY_END, kCtrlKey | kShiftKey, "MoveToEndOfDocumentAndModifySelection"},
+ #endif
+@@ -145,7 +145,7 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+     {VKEY_BACK, kCtrlKey, "DeleteWordBackward"},
+     {VKEY_DELETE, kCtrlKey, "DeleteWordForward"},
+ #endif
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+     {'B', kCommandKey, "ToggleBold"},
+     {'I', kCommandKey, "ToggleItalic"},
+ #else
+@@ -168,14 +168,14 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+ #if !defined(OS_MAC)
+     // On OS X, we pipe these back to the browser, so that it can do menu item
+     // blinking.
+-    {'C', kCtrlKey, "Copy"},
+-    {'V', kCtrlKey, "Paste"},
+-    {'V', kCtrlKey | kShiftKey, "PasteAndMatchStyle"},
+-    {'X', kCtrlKey, "Cut"},
+-    {'A', kCtrlKey, "SelectAll"},
+-    {'Z', kCtrlKey, "Undo"},
+-    {'Z', kCtrlKey | kShiftKey, "Redo"},
+-    {'Y', kCtrlKey, "Redo"},
++    {'C', kCommandKey, "Copy"},
++    {'V', kCommandKey, "Paste"},
++    {'V', kCommandKey | kShiftKey, "PasteAndMatchStyle"},
++    {'X', kCommandKey, "Cut"},
++    {'A', kCommandKey, "SelectAll"},
++    {'Z', kCommandKey, "Undo"},
++    {'Z', kCommandKey | kShiftKey, "Redo"},
++    {'Y', kCommandKey, "Redo"},
+ #endif
+ #if defined(OS_WIN)
+     {VKEY_BACK, kAltKey, "Undo"},
+@@ -274,19 +274,19 @@ bool EditingBehavior::ShouldInsertCharacter(const KeyboardEvent& event) const {
+   // unexpected behaviour
+   if (ch < ' ')
+     return false;
+-#if defined(OS_LINUX) || defined(OS_CHROMEOS)
++//#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+   // According to XKB map no keyboard combinations with ctrl key are mapped to
+   // printable characters, however we need the filter as the DomKey/text could
+   // contain printable characters.
+-  if (event.ctrlKey())
+-    return false;
+-#elif !defined(OS_WIN)
++  //if (event.ctrlKey())
++    //return false;
++#if !defined(OS_WIN)
+   // Don't insert ASCII character if ctrl w/o alt or meta is on.
+   // On Mac, we should ignore events when meta is on (Command-<x>).
+   if (ch < 0x80) {
+     if (event.ctrlKey() && !event.altKey())
+       return false;
+-#if defined(OS_MAC)
++#if defined(OS_MAC) || defined(OS_LINUX)
+     if (event.metaKey())
+       return false;
+ #endif
+diff --git a/ui/base/accelerators/accelerator.cc b/ui/base/accelerators/accelerator.cc
+index 627e077480fe..e35db380b877 100644
+--- a/ui/base/accelerators/accelerator.cc
++++ b/ui/base/accelerators/accelerator.cc
+@@ -414,7 +414,7 @@ base::string16 Accelerator::ApplyLongFormModifiers(
+     shortcut = ApplyModifierToAcceleratorString(shortcut, IDS_APP_ALT_KEY);
+ 
+   if (IsCmdDown()) {
+-#if defined(OS_APPLE)
++#if defined(OS_APPLE) || defined(OS_LINUX)
+     shortcut = ApplyModifierToAcceleratorString(shortcut, IDS_APP_COMMAND_KEY);
+ #elif defined(OS_CHROMEOS)
+     shortcut = ApplyModifierToAcceleratorString(shortcut, IDS_APP_SEARCH_KEY);
+diff --git a/ui/base/window_open_disposition.cc b/ui/base/window_open_disposition.cc
+index d90ce70031fc..32dfebc127ac 100644
+--- a/ui/base/window_open_disposition.cc
++++ b/ui/base/window_open_disposition.cc
+@@ -17,7 +17,7 @@ WindowOpenDisposition DispositionFromClick(
+     bool shift_key,
+     WindowOpenDisposition disposition_for_current_tab) {
+   // MacOS uses meta key (Command key) to spawn new tabs.
+-#if defined(OS_APPLE)
++#if defined(OS_APPLE) || defined(OS_LINUX)
+   if (middle_button || meta_key)
+ #else
+   if (middle_button || ctrl_key)
+diff --git a/ui/events/base_event_utils.cc b/ui/events/base_event_utils.cc
+index f5c709d2e650..61230220818d 100644
+--- a/ui/events/base_event_utils.cc
++++ b/ui/events/base_event_utils.cc
+@@ -22,6 +22,8 @@ const int kSystemKeyModifierMask = EF_ALT_DOWN | EF_COMMAND_DOWN;
+ #elif defined(OS_APPLE)
+ // Alt modifier is used to input extended characters on Mac.
+ const int kSystemKeyModifierMask = EF_COMMAND_DOWN;
++#elif defined(OS_LINUX)
++const int kSystemKeyModifierMask = EF_COMMAND_DOWN;
+ #else
+ const int kSystemKeyModifierMask = EF_ALT_DOWN;
+ #endif  // !defined(OS_CHROMEOS) && !defined(OS_APPLE)
+diff --git a/ui/events/event_constants.h b/ui/events/event_constants.h
+index 0b60cb443edc..f8da4fa50dd0 100644
+--- a/ui/events/event_constants.h
++++ b/ui/events/event_constants.h
+@@ -47,7 +47,9 @@ enum EventFlags {
+ #if defined(OS_APPLE)
+   EF_PLATFORM_ACCELERATOR = EF_COMMAND_DOWN,
+ #else
+-  EF_PLATFORM_ACCELERATOR = EF_CONTROL_DOWN,
++  // TODO(hparadiz): Build Configurable EF_PLATFORM_ACCELERATOR from chrome://flags
++  EF_PLATFORM_ACCELERATOR = EF_COMMAND_DOWN,
++  //EF_PLATFORM_ACCELERATOR = EF_CONTROL_DOWN,
+ #endif
+ };
+ 
+diff --git a/ui/views/controls/textfield/textfield.cc b/ui/views/controls/textfield/textfield.cc
+index 31ad40b5fe99..c22e138a91b7 100644
+--- a/ui/views/controls/textfield/textfield.cc
++++ b/ui/views/controls/textfield/textfield.cc
+@@ -127,46 +127,47 @@ ui::TextEditCommand GetCommandForKeyEvent(const ui::KeyEvent& event) {
+   const bool shift = event.IsShiftDown();
+   const bool control = event.IsControlDown() || event.IsCommandDown();
+   const bool alt = event.IsAltDown() || event.IsAltGrDown();
++  const bool command = event.IsCommandDown();
+   switch (event.key_code()) {
+     case ui::VKEY_Z:
+       if (control && !shift && !alt)
+         return ui::TextEditCommand::UNDO;
+-      return (control && shift && !alt) ? ui::TextEditCommand::REDO
++      return (command && shift && !alt) ? ui::TextEditCommand::REDO
+                                         : ui::TextEditCommand::INVALID_COMMAND;
+     case ui::VKEY_Y:
+-      return (control && !alt) ? ui::TextEditCommand::REDO
++      return (command && !alt) ? ui::TextEditCommand::REDO
+                                : ui::TextEditCommand::INVALID_COMMAND;
+     case ui::VKEY_A:
+-      return (control && !alt) ? ui::TextEditCommand::SELECT_ALL
++      return (command && !alt) ? ui::TextEditCommand::SELECT_ALL
+                                : ui::TextEditCommand::INVALID_COMMAND;
+     case ui::VKEY_X:
+-      return (control && !alt) ? ui::TextEditCommand::CUT
++      return (command && !alt) ? ui::TextEditCommand::CUT
+                                : ui::TextEditCommand::INVALID_COMMAND;
+     case ui::VKEY_C:
+-      return (control && !alt) ? ui::TextEditCommand::COPY
++      return (command && !alt) ? ui::TextEditCommand::COPY
+                                : ui::TextEditCommand::INVALID_COMMAND;
+     case ui::VKEY_V:
+-      return (control && !alt) ? ui::TextEditCommand::PASTE
++      return (command && !alt) ? ui::TextEditCommand::PASTE
+                                : ui::TextEditCommand::INVALID_COMMAND;
+     case ui::VKEY_RIGHT:
+       // Ignore alt+right, which may be a browser navigation shortcut.
+       if (alt)
+         return ui::TextEditCommand::INVALID_COMMAND;
+       if (!shift) {
+-        return control ? ui::TextEditCommand::MOVE_WORD_RIGHT
++        return command ? ui::TextEditCommand::MOVE_WORD_RIGHT
+                        : ui::TextEditCommand::MOVE_RIGHT;
+       }
+-      return control ? ui::TextEditCommand::MOVE_WORD_RIGHT_AND_MODIFY_SELECTION
++      return command ? ui::TextEditCommand::MOVE_WORD_RIGHT_AND_MODIFY_SELECTION
+                      : ui::TextEditCommand::MOVE_RIGHT_AND_MODIFY_SELECTION;
+     case ui::VKEY_LEFT:
+       // Ignore alt+left, which may be a browser navigation shortcut.
+       if (alt)
+         return ui::TextEditCommand::INVALID_COMMAND;
+       if (!shift) {
+-        return control ? ui::TextEditCommand::MOVE_WORD_LEFT
++        return command ? ui::TextEditCommand::MOVE_WORD_LEFT
+                        : ui::TextEditCommand::MOVE_LEFT;
+       }
+-      return control ? ui::TextEditCommand::MOVE_WORD_LEFT_AND_MODIFY_SELECTION
++      return command ? ui::TextEditCommand::MOVE_WORD_LEFT_AND_MODIFY_SELECTION
+                      : ui::TextEditCommand::MOVE_LEFT_AND_MODIFY_SELECTION;
+     case ui::VKEY_HOME:
+       return shift ? ui::TextEditCommand::
+@@ -204,12 +205,12 @@ ui::TextEditCommand GetCommandForKeyEvent(const ui::KeyEvent& event) {
+       if (shift && control)
+         return ui::TextEditCommand::DELETE_TO_END_OF_LINE;
+ #endif
+-      if (control)
++      if (command)
+         return ui::TextEditCommand::DELETE_WORD_FORWARD;
+       return shift ? ui::TextEditCommand::CUT
+                    : ui::TextEditCommand::DELETE_FORWARD;
+     case ui::VKEY_INSERT:
+-      if (control && !shift)
++      if (command && !shift)
+         return ui::TextEditCommand::COPY;
+       return (shift && !control) ? ui::TextEditCommand::PASTE
+                                  : ui::TextEditCommand::INVALID_COMMAND;
+@@ -351,9 +352,9 @@ Textfield::Textfield()
+   // These allow BrowserView to pass edit commands from the Chrome menu to us
+   // when we're focused by simply asking the FocusManager to
+   // ProcessAccelerator() with the relevant accelerators.
+-  AddAccelerator(ui::Accelerator(ui::VKEY_X, ui::EF_CONTROL_DOWN));
+-  AddAccelerator(ui::Accelerator(ui::VKEY_C, ui::EF_CONTROL_DOWN));
+-  AddAccelerator(ui::Accelerator(ui::VKEY_V, ui::EF_CONTROL_DOWN));
++  AddAccelerator(ui::Accelerator(ui::VKEY_X, ui::EF_PLATFORM_ACCELERATOR));
++  AddAccelerator(ui::Accelerator(ui::VKEY_C, ui::EF_PLATFORM_ACCELERATOR));
++  AddAccelerator(ui::Accelerator(ui::VKEY_V, ui::EF_PLATFORM_ACCELERATOR));
+ #endif
+ 
+   // Sometimes there are additional ignored views, such as the View representing
