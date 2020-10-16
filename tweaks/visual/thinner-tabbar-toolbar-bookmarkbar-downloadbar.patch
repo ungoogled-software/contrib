@@ -8,7 +8,7 @@
 
 --- a/chrome/browser/ui/views/download/download_item_view.cc
 +++ b/chrome/browser/ui/views/download/download_item_view.cc
-@@ -120,14 +120,14 @@
+@@ -134,7 +134,7 @@
  
  // The vertical distance between the item's visual upper bound (as delineated
  // by the separator on the right) and the edge of the shelf.
@@ -17,14 +17,15 @@
  
  // The minimum vertical padding above and below contents of the download item.
  // This is only used when the text size is large.
- constexpr int kMinimumVerticalPadding = 2 + kTopBottomPadding;
+@@ -555,7 +555,7 @@
+   }
  
- // The normal height of the item which may be exceeded if text is large.
--constexpr int kDefaultDownloadItemHeight = 48;
-+constexpr int kDefaultDownloadItemHeight = 24;
- 
- // Amount of time between accessible alert events.
- constexpr auto kAccessibleAlertInterval = base::TimeDelta::FromSeconds(30);
+   // The normal height of the item which may be exceeded if text is large.
+-  constexpr int kDefaultDownloadItemHeight = 48;
++  constexpr int kDefaultDownloadItemHeight = 24;
+   return gfx::Size(width, std::max(kDefaultDownloadItemHeight,
+                                    2 * kMinimumVerticalPadding + height));
+ }
 --- a/chrome/browser/ui/layout_constants.cc
 +++ b/chrome/browser/ui/layout_constants.cc
 @@ -33,13 +33,13 @@
@@ -44,7 +45,7 @@
      case WEB_APP_MENU_BUTTON_SIZE:
        return 24;
      case WEB_APP_PAGE_ACTION_ICON_SIZE:
-@@ -47,17 +47,17 @@
+@@ -47,18 +47,18 @@
        // stretching the container view.
        return 16;
      case LOCATION_BAR_BUBBLE_FONT_VERTICAL_PADDING:
@@ -58,14 +59,15 @@
      case LOCATION_BAR_ELEMENT_PADDING:
        return touch_ui ? 3 : 2;
      case LOCATION_BAR_HEIGHT:
-       if (OmniboxFieldTrial::RichAutocompletionTwoLineOmnibox())
+       if (OmniboxFieldTrial::RichAutocompletionShowAdditionalText() &&
+           OmniboxFieldTrial::RichAutocompletionTwoLineOmnibox())
          return touch_ui ? 52 : 40;
 -      return touch_ui ? 36 : 28;
 +      return touch_ui ? 36 : 24;
      case LOCATION_BAR_ICON_SIZE:
        return touch_ui ? 20 : 16;
      case TAB_AFTER_TITLE_PADDING:
-@@ -67,7 +67,7 @@
+@@ -68,7 +68,7 @@
      case TAB_ALERT_INDICATOR_ICON_WIDTH:
        return touch_ui ? 12 : 16;
      case TAB_HEIGHT:
@@ -74,7 +76,7 @@
      case TAB_PRE_TITLE_PADDING:
        return 8;
      case TAB_STACK_DISTANCE:
-@@ -75,7 +75,7 @@
+@@ -76,7 +76,7 @@
      case TABSTRIP_TOOLBAR_OVERLAP:
        return 1;
      case TOOLBAR_BUTTON_HEIGHT:
@@ -83,7 +85,7 @@
      case TOOLBAR_ELEMENT_PADDING:
        return touch_ui ? 0 : 4;
      case TOOLBAR_STANDARD_SPACING:
-@@ -103,7 +103,7 @@
+@@ -104,7 +104,7 @@
      }
  
      case TOOLBAR_INTERIOR_MARGIN:
