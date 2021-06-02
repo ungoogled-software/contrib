@@ -9,7 +9,7 @@
 
 --- a/cc/input/scrollbar_animation_controller.cc
 +++ b/cc/input/scrollbar_animation_controller.cc
-@@ -362,6 +362,8 @@
+@@ -364,6 +364,8 @@ void ScrollbarAnimationController::Show(
  }
  
  void ScrollbarAnimationController::ApplyOpacityToScrollbars(float opacity) {

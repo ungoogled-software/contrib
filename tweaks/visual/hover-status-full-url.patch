@@ -1,0 +1,13 @@
+## Always show the full URL in the status bubble when hovering links
+
+--- a/chrome/browser/ui/status_bubble.h
++++ b/chrome/browser/ui/status_bubble.h
+@@ -18,7 +18,7 @@ class GURL;
+ class StatusBubble {
+  public:
+   // On hover, expand status bubble to fit long URL after this delay.
+-  static const int kExpandHoverDelayMS = 1600;
++  static const int kExpandHoverDelayMS = 0;
+ 
+   virtual ~StatusBubble() {}
+ 
