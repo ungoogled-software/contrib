@@ -7,7 +7,7 @@
 # subtle-source-indicator-for-extensions.patch - as no indicator is shown.
 ##
 
---- a/chrome/browser/resources/extensions/item.html.orig
+--- a/chrome/browser/resources/extensions/item.html
 +++ b/chrome/browser/resources/extensions/item.html
 @@ -136,6 +136,7 @@
      margin-inline-start: 24px;
