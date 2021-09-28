@@ -1,0 +1,15 @@
+## This patch hides the separator at the bottom of the toolbar when no infobars are present.
+
+--- a/chrome/browser/ui/views/frame/browser_view_layout.cc
++++ b/chrome/browser/ui/views/frame/browser_view_layout.cc
+@@ -461,8 +461,9 @@ int BrowserViewLayout::LayoutBookmarkAnd
+ 
+   if (delegate_->IsContentsSeparatorEnabled() &&
+       (toolbar_->GetVisible() || bookmark_bar_) && top > 0) {
+-    SetViewVisibility(contents_separator_, true);
++    SetViewVisibility(contents_separator_, infobar_container_->children().size() > 1);
+     const int separator_height =
++        infobar_container_->children().size() < 2 ? 0 :
+         contents_separator_->GetPreferredSize().height();
+     contents_separator_->SetBounds(vertical_layout_rect_.x(), top,
+                                    vertical_layout_rect_.width(),
