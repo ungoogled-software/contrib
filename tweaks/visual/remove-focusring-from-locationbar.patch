@@ -4,9 +4,9 @@
 
 --- a/chrome/browser/ui/views/location_bar/location_bar_view.cc
 +++ b/chrome/browser/ui/views/location_bar/location_bar_view.cc
-@@ -167,20 +167,6 @@ LocationBarView::LocationBarView(Browser
-       delegate_(delegate),
+@@ -169,20 +169,6 @@ LocationBarView::LocationBarView(Browser
        is_popup_mode_(is_popup_mode) {
+   set_suppress_default_focus_handling();
    if (!is_popup_mode_) {
 -    views::FocusRing::Install(this);
 -    views::FocusRing::Get(this)->SetHasFocusPredicate([](View* view) -> bool {

@@ -161,7 +161,7 @@
  #endif
  #if defined(OS_WIN)
      {VKEY_BACK, kAltKey, "Undo"},
-@@ -276,19 +276,19 @@ bool EditingBehavior::ShouldInsertCharac
+@@ -280,19 +280,19 @@ bool EditingBehavior::ShouldInsertCharac
    // unexpected behaviour
    if (ch < ' ')
      return false;
@@ -223,7 +223,7 @@
  
 --- a/ui/views/controls/textfield/textfield.cc
 +++ b/ui/views/controls/textfield/textfield.cc
-@@ -249,9 +249,9 @@ Textfield::Textfield()
+@@ -240,9 +240,9 @@ Textfield::Textfield()
    // These allow BrowserView to pass edit commands from the Chrome menu to us
    // when we're focused by simply asking the FocusManager to
    // ProcessAccelerator() with the relevant accelerators.
@@ -236,7 +236,7 @@
  #endif
  
    // Sometimes there are additional ignored views, such as the View representing
-@@ -2145,46 +2145,47 @@ ui::TextEditCommand Textfield::GetComman
+@@ -2123,46 +2123,47 @@ ui::TextEditCommand Textfield::GetComman
  #endif
    const bool control = event.IsControlDown() || event.IsCommandDown();
    const bool alt = event.IsAltDown() || event.IsAltGrDown();
@@ -294,7 +294,7 @@
                       : ui::TextEditCommand::MOVE_LEFT_AND_MODIFY_SELECTION;
      case ui::VKEY_HOME:
        if (shift) {
-@@ -2255,12 +2256,12 @@ ui::TextEditCommand Textfield::GetComman
+@@ -2233,12 +2234,12 @@ ui::TextEditCommand Textfield::GetComman
        if (shift && control)
          return ui::TextEditCommand::DELETE_TO_END_OF_LINE;
  #endif

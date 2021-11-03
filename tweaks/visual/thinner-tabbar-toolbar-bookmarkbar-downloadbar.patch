@@ -73,7 +73,7 @@
    return gfx::Insets();
 --- a/chrome/browser/ui/views/download/download_item_view.cc
 +++ b/chrome/browser/ui/views/download/download_item_view.cc
-@@ -130,7 +130,7 @@ constexpr int kProgressIndicatorSize = 2
+@@ -129,7 +129,7 @@ constexpr int kProgressIndicatorSize = 2
  
  // The vertical distance between the item's visual upper bound (as delineated
  // by the separator on the right) and the edge of the shelf.

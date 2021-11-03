@@ -2,7 +2,7 @@
 
 --- a/chrome/browser/ui/views/frame/browser_view_layout.cc
 +++ b/chrome/browser/ui/views/frame/browser_view_layout.cc
-@@ -461,8 +461,9 @@ int BrowserViewLayout::LayoutBookmarkAnd
+@@ -466,8 +466,9 @@ int BrowserViewLayout::LayoutBookmarkAnd
  
    if (delegate_->IsContentsSeparatorEnabled() &&
        (toolbar_->GetVisible() || bookmark_bar_) && top > 0) {
