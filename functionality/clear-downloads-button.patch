@@ -1,0 +1,37 @@
+## Replaces the Show all downloads button in the download bar with a button that clears all downloads
+
+--- a/chrome/browser/download/download_shelf.cc
++++ b/chrome/browser/download/download_shelf.cc
+@@ -151,3 +151,8 @@ void DownloadShelf::OnGetDownloadDoneFor
+     ShowDownload(OfflineItemModel::Wrap(manager, item.value()));
+   }
+ }
++
++void DownloadShelf::Clear() {
++  auto* const manager = profile()->GetDownloadManager();
++  if (manager) manager->RemoveDownloadsByURLAndTime(base::BindRepeating([](const GURL&) { return true; }), base::Time(), base::Time());
++}
+--- a/chrome/browser/download/download_shelf.h
++++ b/chrome/browser/download/download_shelf.h
+@@ -69,6 +69,8 @@ class DownloadShelf {
+   virtual views::View* GetView() = 0;
+   bool is_hidden() const { return is_hidden_; }
+ 
++  void Clear();
++
+  protected:
+   virtual void DoShowDownload(DownloadUIModel::DownloadUIModelPtr download) = 0;
+   virtual void DoOpen() = 0;
+--- a/chrome/browser/ui/views/download/download_shelf_view.cc
++++ b/chrome/browser/ui/views/download/download_shelf_view.cc
+@@ -78,8 +78,8 @@ DownloadShelfView::DownloadShelfView(Bro
+   SetVisible(false);
+ 
+   show_all_view_ = AddChildView(std::make_unique<views::MdTextButton>(
+-      base::BindRepeating(&chrome::ShowDownloads, browser),
+-      l10n_util::GetStringUTF16(IDS_SHOW_ALL_DOWNLOADS)));
++      base::BindRepeating(&DownloadShelf::Clear, base::Unretained(this)),
++      l10n_util::GetStringUTF16(IDS_DOWNLOAD_LINK_CLEAR_ALL)));
+   show_all_view_->SizeToPreferredSize();
+ 
+   close_button_ = AddChildView(views::CreateVectorImageButton(

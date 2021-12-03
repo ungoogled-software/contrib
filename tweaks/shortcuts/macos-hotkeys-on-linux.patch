@@ -2,7 +2,7 @@
 # Copy to /etc/portage/patches/www-client/ungoogled-chromium/ and emerge like normal
 --- a/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
 +++ b/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
-@@ -144,39 +144,39 @@ bool RenderViewContextMenuViews::GetAcce
+@@ -144,34 +144,34 @@ bool RenderViewContextMenuViews::GetAcce
        return true;
  
      case IDC_CONTENT_CONTEXT_UNDO:
@@ -27,12 +27,6 @@
 +      *accel = ui::Accelerator(ui::VKEY_C, ui::EF_PLATFORM_ACCELERATOR);
        return true;
  
-     case IDC_CONTENT_CONTEXT_INSPECTELEMENT:
-       *accel = ui::Accelerator(ui::VKEY_I,
--                               ui::EF_SHIFT_DOWN | ui::EF_CONTROL_DOWN);
-+                               ui::EF_SHIFT_DOWN | ui::EF_PLATFORM_ACCELERATOR);
-       return true;
- 
      case IDC_CONTENT_CONTEXT_PASTE:
 -      *accel = ui::Accelerator(ui::VKEY_V, ui::EF_CONTROL_DOWN);
 +      *accel = ui::Accelerator(ui::VKEY_V, ui::EF_PLATFORM_ACCELERATOR);
@@ -50,7 +44,7 @@
        return true;
  
      case IDC_CONTENT_CONTEXT_ROTATECCW:
-@@ -192,11 +192,11 @@ bool RenderViewContextMenuViews::GetAcce
+@@ -187,11 +187,11 @@ bool RenderViewContextMenuViews::GetAcce
        return true;
  
      case IDC_PRINT:
@@ -75,20 +69,9 @@
        } else if (platform_key == values::kKeybindingPlatformDefault) {
          // If we see "Command+foo" in the Default section it can mean two
          // things, depending on the platform:
---- a/content/renderer/pepper/pepper_plugin_instance_impl.cc
-+++ b/content/renderer/pepper/pepper_plugin_instance_impl.cc
-@@ -1437,7 +1437,7 @@ void PepperPluginInstanceImpl::SelectAll
- 
-   // TODO(https://crbug.com/836074) |kPlatformModifier| should be
-   // |ui::EF_PLATFORM_ACCELERATOR| (|ui::EF_COMMAND_DOWN| on Mac).
--  static const ui::EventFlags kPlatformModifier = ui::EF_CONTROL_DOWN;
-+  static const ui::EventFlags kPlatformModifier = ui::EF_COMMAND_DOWN;
-   // Synthesize a ctrl + a key event to send to the plugin and let it sort out
-   // the event. See also https://crbug.com/739529.
-   ui::KeyEvent char_event(L'A', ui::VKEY_A, ui::DomCode::NONE,
 --- a/third_party/blink/renderer/core/editing/editing_behavior.cc
 +++ b/third_party/blink/renderer/core/editing/editing_behavior.cc
-@@ -45,7 +45,7 @@ const unsigned kCtrlKey = WebInputEvent:
+@@ -44,7 +44,7 @@ const unsigned kCtrlKey = WebInputEvent:
  const unsigned kAltKey = WebInputEvent::kAltKey;
  const unsigned kShiftKey = WebInputEvent::kShiftKey;
  const unsigned kMetaKey = WebInputEvent::kMetaKey;
@@ -97,7 +80,7 @@
  // Aliases for the generic key defintions to make kbd shortcuts definitions more
  // readable on OS X.
  const unsigned kOptionKey = kAltKey;
-@@ -88,7 +88,7 @@ struct DomKeyKeyDownEntry {
+@@ -87,7 +87,7 @@ struct DomKeyKeyDownEntry {
  const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
      {VKEY_LEFT, 0, "MoveLeft"},
      {VKEY_LEFT, kShiftKey, "MoveLeftAndModifySelection"},
@@ -106,7 +89,7 @@
      {VKEY_LEFT, kOptionKey, "MoveWordLeft"},
      {VKEY_LEFT, kOptionKey | kShiftKey, "MoveWordLeftAndModifySelection"},
  #else
-@@ -97,7 +97,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -96,7 +96,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
  #endif
      {VKEY_RIGHT, 0, "MoveRight"},
      {VKEY_RIGHT, kShiftKey, "MoveRightAndModifySelection"},
@@ -115,7 +98,7 @@
      {VKEY_RIGHT, kOptionKey, "MoveWordRight"},
      {VKEY_RIGHT, kOptionKey | kShiftKey, "MoveWordRightAndModifySelection"},
  #else
-@@ -110,7 +110,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -109,7 +109,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
      {VKEY_DOWN, 0, "MoveDown"},
      {VKEY_DOWN, kShiftKey, "MoveDownAndModifySelection"},
      {VKEY_NEXT, kShiftKey, "MovePageDownAndModifySelection"},
@@ -124,7 +107,7 @@
      {VKEY_UP, kCtrlKey, "MoveParagraphBackward"},
      {VKEY_UP, kCtrlKey | kShiftKey, "MoveParagraphBackwardAndModifySelection"},
      {VKEY_DOWN, kCtrlKey, "MoveParagraphForward"},
-@@ -120,18 +120,18 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -119,18 +119,18 @@ const KeyboardCodeKeyDownEntry kKeyboard
  #endif
      {VKEY_HOME, 0, "MoveToBeginningOfLine"},
      {VKEY_HOME, kShiftKey, "MoveToBeginningOfLineAndModifySelection"},
@@ -146,7 +129,7 @@
      {VKEY_END, kCtrlKey, "MoveToEndOfDocument"},
      {VKEY_END, kCtrlKey | kShiftKey, "MoveToEndOfDocumentAndModifySelection"},
  #endif
-@@ -145,7 +145,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -144,7 +144,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
      {VKEY_BACK, kCtrlKey, "DeleteWordBackward"},
      {VKEY_DELETE, kCtrlKey, "DeleteWordForward"},
  #endif
@@ -155,7 +138,7 @@
      {'B', kCommandKey, "ToggleBold"},
      {'I', kCommandKey, "ToggleItalic"},
  #else
-@@ -168,14 +168,14 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -167,14 +167,14 @@ const KeyboardCodeKeyDownEntry kKeyboard
  #if !defined(OS_MAC)
      // On OS X, we pipe these back to the browser, so that it can do menu item
      // blinking.
@@ -178,7 +161,7 @@
  #endif
  #if defined(OS_WIN)
      {VKEY_BACK, kAltKey, "Undo"},
-@@ -274,19 +274,19 @@ bool EditingBehavior::ShouldInsertCharac
+@@ -280,19 +280,19 @@ bool EditingBehavior::ShouldInsertCharac
    // unexpected behaviour
    if (ch < ' ')
      return false;
@@ -240,7 +223,7 @@
  
 --- a/ui/views/controls/textfield/textfield.cc
 +++ b/ui/views/controls/textfield/textfield.cc
-@@ -253,9 +253,9 @@ Textfield::Textfield()
+@@ -240,9 +240,9 @@ Textfield::Textfield()
    // These allow BrowserView to pass edit commands from the Chrome menu to us
    // when we're focused by simply asking the FocusManager to
    // ProcessAccelerator() with the relevant accelerators.
@@ -253,7 +236,7 @@
  #endif
  
    // Sometimes there are additional ignored views, such as the View representing
-@@ -2160,46 +2160,47 @@ ui::TextEditCommand Textfield::GetComman
+@@ -2123,46 +2123,47 @@ ui::TextEditCommand Textfield::GetComman
  #endif
    const bool control = event.IsControlDown() || event.IsCommandDown();
    const bool alt = event.IsAltDown() || event.IsAltGrDown();
@@ -311,7 +294,7 @@
                       : ui::TextEditCommand::MOVE_LEFT_AND_MODIFY_SELECTION;
      case ui::VKEY_HOME:
        if (shift) {
-@@ -2270,12 +2271,12 @@ ui::TextEditCommand Textfield::GetComman
+@@ -2233,12 +2234,12 @@ ui::TextEditCommand Textfield::GetComman
        if (shift && control)
          return ui::TextEditCommand::DELETE_TO_END_OF_LINE;
  #endif

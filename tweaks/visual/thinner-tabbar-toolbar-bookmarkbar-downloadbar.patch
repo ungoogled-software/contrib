@@ -62,7 +62,7 @@
      case TOOLBAR_ELEMENT_PADDING:
        return touch_ui ? 0 : 4;
      case TOOLBAR_STANDARD_SPACING:
-@@ -107,7 +107,7 @@ gfx::Insets GetLayoutInsets(LayoutInset
+@@ -109,7 +109,7 @@ gfx::Insets GetLayoutInsets(LayoutInset
      }
  
      case TOOLBAR_INTERIOR_MARGIN:
@@ -73,7 +73,7 @@
    return gfx::Insets();
 --- a/chrome/browser/ui/views/download/download_item_view.cc
 +++ b/chrome/browser/ui/views/download/download_item_view.cc
-@@ -132,7 +132,7 @@ constexpr int kProgressIndicatorSize = 2
+@@ -129,7 +129,7 @@ constexpr int kProgressIndicatorSize = 2
  
  // The vertical distance between the item's visual upper bound (as delineated
  // by the separator on the right) and the edge of the shelf.
@@ -82,7 +82,7 @@
  
  // The minimum vertical padding above and below contents of the download item.
  // This is only used when the text size is large.
-@@ -540,7 +540,7 @@ gfx::Size DownloadItemView::CalculatePre
+@@ -593,7 +593,7 @@ gfx::Size DownloadItemView::CalculatePre
    }
  
    // The normal height of the item which may be exceeded if text is large.

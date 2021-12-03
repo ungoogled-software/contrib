@@ -6,9 +6,9 @@
 # is __not__ applied - otherwise no indicator is shown.
 ##
 
---- a/chrome/browser/resources/extensions/item.html.orig
+--- a/chrome/browser/resources/extensions/item.html
 +++ b/chrome/browser/resources/extensions/item.html
-@@ -133,27 +133,27 @@
+@@ -133,28 +133,28 @@
    }
  
    #source-indicator {
@@ -17,6 +17,7 @@
      position: absolute;
 +    right: -2px;
 +    bottom: -2px;
+     display: none;
    }
  
    .source-icon-wrapper {

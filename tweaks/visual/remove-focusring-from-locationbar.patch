@@ -4,13 +4,12 @@
 
 --- a/chrome/browser/ui/views/location_bar/location_bar_view.cc
 +++ b/chrome/browser/ui/views/location_bar/location_bar_view.cc
-@@ -152,26 +152,6 @@ LocationBarView::LocationBarView(Browser
-       profile_(profile),
-       delegate_(delegate),
+@@ -169,20 +169,6 @@ LocationBarView::LocationBarView(Browser
        is_popup_mode_(is_popup_mode) {
--  if (!is_popup_mode_) {
--    focus_ring_ = views::FocusRing::Install(this);
--    focus_ring_->SetHasFocusPredicate([](View* view) -> bool {
+   set_suppress_default_focus_handling();
+   if (!is_popup_mode_) {
+-    views::FocusRing::Install(this);
+-    views::FocusRing::Get(this)->SetHasFocusPredicate([](View* view) -> bool {
 -      DCHECK(views::IsViewClass<LocationBarView>(view));
 -      auto* v = static_cast<LocationBarView*>(view);
 -
@@ -20,14 +19,9 @@
 -             !v->GetOmniboxPopupView()->IsOpen();
 -    });
 -
--    focus_ring_->SetPathGenerator(
+-    views::FocusRing::Get(this)->SetPathGenerator(
 -        std::make_unique<views::PillHighlightPathGenerator>());
 -
--#if defined(OS_MAC)
--    geolocation_permission_observation_.Observe(
--        g_browser_process->platform_part()->location_permission_manager());
--#endif
--  }
- }
- 
- LocationBarView::~LocationBarView() = default;
+ #if defined(OS_MAC)
+     geolocation_permission_observation_.Observe(
+         g_browser_process->platform_part()->geolocation_manager());
