@@ -1,0 +1,13 @@
+## Use the default search icon in the locationbar instead of the search engine's icon
+
+--- a/components/omnibox/browser/omnibox_view.cc
++++ b/components/omnibox/browser/omnibox_view.cc
+@@ -205,8 +205,6 @@ ui::ImageModel OmniboxView::GetIcon(int
+   AutocompleteMatch match = model_->CurrentMatch(nullptr);
+   if (AutocompleteMatch::IsSearchType(match.type)) {
+     // For search queries, display default search engine's favicon.
+-    favicon = model_->client()->GetFaviconForDefaultSearchProvider(
+-        std::move(on_icon_fetched));
+ 
+   } else {
+     // For site suggestions, display site's favicon.

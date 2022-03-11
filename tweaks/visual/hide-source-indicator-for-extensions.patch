@@ -1,0 +1,19 @@
+## This patch hides the badges on the chrome://extensions/ page, 
+# which show a source-indicator for e.g. "Unpacked extension", 
+# or "Not from Chrome Web Store."
+# See also https://github.com/Eloston/ungoogled-chromium/issues/1552
+#
+# When using this patch there is no need to also apply the
+# subtle-source-indicator-for-extensions.patch - as no indicator is shown.
+##
+
+--- a/chrome/browser/resources/extensions/item.html
++++ b/chrome/browser/resources/extensions/item.html
+@@ -136,6 +136,7 @@
+     margin-inline-start: 24px;
+     margin-top: 24px;
+     position: absolute;
++    display: none;
+   }
+ 
+   .source-icon-wrapper {

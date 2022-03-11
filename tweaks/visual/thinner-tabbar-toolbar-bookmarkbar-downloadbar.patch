@@ -6,29 +6,9 @@
 # Their height is based on the height of two rows of text using your current
 # font, so that could vary depending on your settings.  
 
---- a/chrome/browser/ui/views/download/download_item_view.cc
-+++ b/chrome/browser/ui/views/download/download_item_view.cc
-@@ -134,7 +134,7 @@
- 
- // The vertical distance between the item's visual upper bound (as delineated
- // by the separator on the right) and the edge of the shelf.
--constexpr int kTopBottomPadding = 6;
-+constexpr int kTopBottomPadding = 0;
- 
- // The minimum vertical padding above and below contents of the download item.
- // This is only used when the text size is large.
-@@ -555,7 +555,7 @@
-   }
- 
-   // The normal height of the item which may be exceeded if text is large.
--  constexpr int kDefaultDownloadItemHeight = 48;
-+  constexpr int kDefaultDownloadItemHeight = 24;
-   return gfx::Size(width, std::max(kDefaultDownloadItemHeight,
-                                    2 * kMinimumVerticalPadding + height));
- }
 --- a/chrome/browser/ui/layout_constants.cc
 +++ b/chrome/browser/ui/layout_constants.cc
-@@ -33,13 +33,13 @@
+@@ -33,13 +33,13 @@ int GetLayoutConstant(LayoutConstant con
      case BOOKMARK_BAR_HEIGHT:
        // The fixed margin ensures the bookmark buttons appear centered relative
        // to the white space above and below.
@@ -45,7 +25,7 @@
      case WEB_APP_MENU_BUTTON_SIZE:
        return 24;
      case WEB_APP_PAGE_ACTION_ICON_SIZE:
-@@ -47,18 +47,18 @@
+@@ -47,15 +47,15 @@ int GetLayoutConstant(LayoutConstant con
        // stretching the container view.
        return 16;
      case LOCATION_BAR_BUBBLE_FONT_VERTICAL_PADDING:
@@ -59,15 +39,12 @@
      case LOCATION_BAR_ELEMENT_PADDING:
        return touch_ui ? 3 : 2;
      case LOCATION_BAR_HEIGHT:
-       if (OmniboxFieldTrial::RichAutocompletionShowAdditionalText() &&
-           OmniboxFieldTrial::RichAutocompletionTwoLineOmnibox())
-         return touch_ui ? 52 : 40;
 -      return touch_ui ? 36 : 28;
 +      return touch_ui ? 36 : 24;
      case LOCATION_BAR_ICON_SIZE:
        return touch_ui ? 20 : 16;
      case TAB_AFTER_TITLE_PADDING:
-@@ -68,7 +68,7 @@
+@@ -65,7 +65,7 @@ int GetLayoutConstant(LayoutConstant con
      case TAB_ALERT_INDICATOR_ICON_WIDTH:
        return touch_ui ? 12 : 16;
      case TAB_HEIGHT:
@@ -76,8 +53,8 @@
      case TAB_PRE_TITLE_PADDING:
        return 8;
      case TAB_STACK_DISTANCE:
-@@ -76,7 +76,7 @@
-     case TABSTRIP_TOOLBAR_OVERLAP:
+@@ -79,7 +79,7 @@ int GetLayoutConstant(LayoutConstant con
+         return 0;
        return 1;
      case TOOLBAR_BUTTON_HEIGHT:
 -      return touch_ui ? 48 : 28;
@@ -85,7 +62,7 @@
      case TOOLBAR_ELEMENT_PADDING:
        return touch_ui ? 0 : 4;
      case TOOLBAR_STANDARD_SPACING:
-@@ -104,7 +104,7 @@
+@@ -109,7 +109,7 @@ gfx::Insets GetLayoutInsets(LayoutInset
      }
  
      case TOOLBAR_INTERIOR_MARGIN:
@@ -94,3 +71,23 @@
    }
    NOTREACHED();
    return gfx::Insets();
+--- a/chrome/browser/ui/views/download/download_item_view.cc
++++ b/chrome/browser/ui/views/download/download_item_view.cc
+@@ -129,7 +129,7 @@ constexpr int kProgressIndicatorSize = 2
+ 
+ // The vertical distance between the item's visual upper bound (as delineated
+ // by the separator on the right) and the edge of the shelf.
+-constexpr int kTopBottomPadding = 6;
++constexpr int kTopBottomPadding = 0;
+ 
+ // The minimum vertical padding above and below contents of the download item.
+ // This is only used when the text size is large.
+@@ -593,7 +593,7 @@ gfx::Size DownloadItemView::CalculatePre
+   }
+ 
+   // The normal height of the item which may be exceeded if text is large.
+-  constexpr int kDefaultDownloadItemHeight = 48;
++  constexpr int kDefaultDownloadItemHeight = 24;
+   return gfx::Size(width, std::max(kDefaultDownloadItemHeight,
+                                    2 * kMinimumVerticalPadding + height));
+ }

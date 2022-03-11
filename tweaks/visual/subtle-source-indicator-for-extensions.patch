@@ -1,0 +1,52 @@
+## This patch changes the source-indicator badges on 
+# the chrome://extensions/ page to a subtler version.
+# See also https://github.com/Eloston/ungoogled-chromium/issues/1552
+#
+# When using this patch check that hide-source-indicator-for-extensions.patch
+# is __not__ applied - otherwise no indicator is shown.
+##
+
+--- a/chrome/browser/resources/extensions/item.html
++++ b/chrome/browser/resources/extensions/item.html
+@@ -133,28 +133,28 @@
+   }
+ 
+   #source-indicator {
+-    margin-inline-start: 24px;
+-    margin-top: 24px;
+     position: absolute;
++    right: -2px;
++    bottom: -2px;
+     display: none;
+   }
+ 
+   .source-icon-wrapper {
+-    align-items: center;
+-    background: rgb(241, 89, 43);  /* Same in light & dark modes. */
+-    border-radius: 50%;  /* 50% border radius === a circle */
+-    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.22),
+-                0 2px 2px 0 rgba(0, 0, 0, 0.12);
+     display: flex;
+-    height: 22px;
+-    justify-content: center;
+-    width: 22px;
++    height: 16px;
++    width: 16px;
++  }
++
++  .source-icon-wrapper[aria-label="Unpacked extension"] {
++    height: 20px;
++    width: 20px;
+   }
+ 
+   #source-indicator iron-icon {
+-    color: white;
+-    height: 16px;
+-    width: 16px;
++    color: #777;
++    height: 100%;
++    width: 100%;
++    margin: auto;
+   }
+ 
+   paper-tooltip {
