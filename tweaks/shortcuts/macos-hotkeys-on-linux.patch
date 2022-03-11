@@ -1,8 +1,8 @@
-# Working patch for Portage Overlay pf4public www-client/ungoogled-chromium
-# Copy to /etc/portage/patches/www-client/ungoogled-chromium/ and emerge like normal
+diff --git a/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc b/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+index 8202df66a..277934322 100644
 --- a/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
 +++ b/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
-@@ -144,34 +144,34 @@ bool RenderViewContextMenuViews::GetAcce
+@@ -145,34 +145,34 @@ bool RenderViewContextMenuViews::GetAcceleratorForCommandId(
        return true;
  
      case IDC_CONTENT_CONTEXT_UNDO:
@@ -44,7 +44,7 @@
        return true;
  
      case IDC_CONTENT_CONTEXT_ROTATECCW:
-@@ -187,11 +187,11 @@ bool RenderViewContextMenuViews::GetAcce
+@@ -188,16 +188,16 @@ bool RenderViewContextMenuViews::GetAcceleratorForCommandId(
        return true;
  
      case IDC_PRINT:
@@ -58,25 +58,31 @@
        return true;
  
      case IDC_CONTENT_CONTEXT_SAVEAVAS:
---- a/chrome/common/extensions/command.cc
-+++ b/chrome/common/extensions/command.cc
-@@ -104,7 +104,7 @@ ui::Accelerator ParseImpl(const std::str
-         // Mac the developer has to specify MacCtrl). Therefore we treat this
-         // as Command.
-         modifiers |= ui::EF_COMMAND_DOWN;
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
-       } else if (platform_key == values::kKeybindingPlatformDefault) {
-         // If we see "Command+foo" in the Default section it can mean two
-         // things, depending on the platform:
+     case IDC_SAVE_PAGE:
+-      *accel = ui::Accelerator(ui::VKEY_S, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_S, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_EXIT_FULLSCREEN: {
+@@ -230,7 +230,7 @@ bool RenderViewContextMenuViews::GetAcceleratorForCommandId(
+     }
+ 
+     case IDC_VIEW_SOURCE:
+-      *accel = ui::Accelerator(ui::VKEY_U, ui::EF_CONTROL_DOWN);
++      *accel = ui::Accelerator(ui::VKEY_U, ui::EF_PLATFORM_ACCELERATOR);
+       return true;
+ 
+     case IDC_CONTENT_CONTEXT_EMOJI:
+diff --git a/third_party/blink/renderer/core/editing/editing_behavior.cc b/third_party/blink/renderer/core/editing/editing_behavior.cc
+index 6b7a35b5b..4e0611418 100644
 --- a/third_party/blink/renderer/core/editing/editing_behavior.cc
 +++ b/third_party/blink/renderer/core/editing/editing_behavior.cc
-@@ -44,7 +44,7 @@ const unsigned kCtrlKey = WebInputEvent:
+@@ -44,7 +44,7 @@ const unsigned kCtrlKey = WebInputEvent::kControlKey;
  const unsigned kAltKey = WebInputEvent::kAltKey;
  const unsigned kShiftKey = WebInputEvent::kShiftKey;
  const unsigned kMetaKey = WebInputEvent::kMetaKey;
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
  // Aliases for the generic key defintions to make kbd shortcuts definitions more
  // readable on OS X.
  const unsigned kOptionKey = kAltKey;
@@ -84,62 +90,69 @@
  const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
      {VKEY_LEFT, 0, "MoveLeft"},
      {VKEY_LEFT, kShiftKey, "MoveLeftAndModifySelection"},
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
      {VKEY_LEFT, kOptionKey, "MoveWordLeft"},
      {VKEY_LEFT, kOptionKey | kShiftKey, "MoveWordLeftAndModifySelection"},
  #else
-@@ -96,7 +96,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -96,7 +96,7 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
  #endif
      {VKEY_RIGHT, 0, "MoveRight"},
      {VKEY_RIGHT, kShiftKey, "MoveRightAndModifySelection"},
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
      {VKEY_RIGHT, kOptionKey, "MoveWordRight"},
      {VKEY_RIGHT, kOptionKey | kShiftKey, "MoveWordRightAndModifySelection"},
  #else
-@@ -109,7 +109,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -109,7 +109,7 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
      {VKEY_DOWN, 0, "MoveDown"},
      {VKEY_DOWN, kShiftKey, "MoveDownAndModifySelection"},
      {VKEY_NEXT, kShiftKey, "MovePageDownAndModifySelection"},
--#if !defined(OS_MAC)
-+#if !defined(OS_MAC) && !defined(OS_LINUX)
+-#if !BUILDFLAG(IS_MAC)
++#if !BUILDFLAG(IS_MAC) && !BUILDFLAG(IS_LINUX)
      {VKEY_UP, kCtrlKey, "MoveParagraphBackward"},
      {VKEY_UP, kCtrlKey | kShiftKey, "MoveParagraphBackwardAndModifySelection"},
      {VKEY_DOWN, kCtrlKey, "MoveParagraphForward"},
-@@ -119,18 +119,18 @@ const KeyboardCodeKeyDownEntry kKeyboard
+@@ -119,32 +119,32 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
  #endif
      {VKEY_HOME, 0, "MoveToBeginningOfLine"},
      {VKEY_HOME, kShiftKey, "MoveToBeginningOfLineAndModifySelection"},
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
      {VKEY_PRIOR, kOptionKey, "MovePageUp"},
      {VKEY_NEXT, kOptionKey, "MovePageDown"},
  #endif
--#if !defined(OS_MAC)
-+#if !defined(OS_MAC) && !defined(OS_LINUX)
+-#if !BUILDFLAG(IS_MAC)
++#if !BUILDFLAG(IS_MAC) && !BUILDFLAG(IS_LINUX)
      {VKEY_HOME, kCtrlKey, "MoveToBeginningOfDocument"},
      {VKEY_HOME, kCtrlKey | kShiftKey,
       "MoveToBeginningOfDocumentAndModifySelection"},
  #endif
      {VKEY_END, 0, "MoveToEndOfLine"},
      {VKEY_END, kShiftKey, "MoveToEndOfLineAndModifySelection"},
--#if !defined(OS_MAC)
-+#if !defined(OS_MAC) && !defined(OS_LINUX)
+-#if !BUILDFLAG(IS_MAC)
++#if !BUILDFLAG(IS_MAC) && !BUILDFLAG(IS_LINUX)
      {VKEY_END, kCtrlKey, "MoveToEndOfDocument"},
      {VKEY_END, kCtrlKey | kShiftKey, "MoveToEndOfDocumentAndModifySelection"},
  #endif
-@@ -144,7 +144,7 @@ const KeyboardCodeKeyDownEntry kKeyboard
+     {VKEY_BACK, 0, "DeleteBackward"},
+     {VKEY_BACK, kShiftKey, "DeleteBackward"},
+     {VKEY_DELETE, 0, "DeleteForward"},
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
+     {VKEY_BACK, kOptionKey, "DeleteWordBackward"},
+     {VKEY_DELETE, kOptionKey, "DeleteWordForward"},
+ #else
      {VKEY_BACK, kCtrlKey, "DeleteWordBackward"},
      {VKEY_DELETE, kCtrlKey, "DeleteWordForward"},
  #endif
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
      {'B', kCommandKey, "ToggleBold"},
      {'I', kCommandKey, "ToggleItalic"},
  #else
-@@ -167,14 +167,14 @@ const KeyboardCodeKeyDownEntry kKeyboard
- #if !defined(OS_MAC)
+@@ -167,14 +167,14 @@ const KeyboardCodeKeyDownEntry kKeyboardCodeKeyDownEntries[] = {
+ #if !BUILDFLAG(IS_MAC)
      // On OS X, we pipe these back to the browser, so that it can do menu item
      // blinking.
 -    {'C', kCtrlKey, "Copy"},
@@ -159,71 +172,77 @@
 +    {'Z', kCommandKey | kShiftKey, "Redo"},
 +    {'Y', kCommandKey, "Redo"},
  #endif
- #if defined(OS_WIN)
+ #if BUILDFLAG(IS_WIN)
      {VKEY_BACK, kAltKey, "Undo"},
-@@ -280,19 +280,19 @@ bool EditingBehavior::ShouldInsertCharac
+@@ -280,19 +280,19 @@ bool EditingBehavior::ShouldInsertCharacter(const KeyboardEvent& event) const {
    // unexpected behaviour
    if (ch < ' ')
      return false;
--#if defined(OS_LINUX) || defined(OS_CHROMEOS)
-+//#if defined(OS_LINUX) || defined(OS_CHROMEOS)
+-#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
++//#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
    // According to XKB map no keyboard combinations with ctrl key are mapped to
    // printable characters, however we need the filter as the DomKey/text could
    // contain printable characters.
 -  if (event.ctrlKey())
 -    return false;
--#elif !defined(OS_WIN)
+-#elif !BUILDFLAG(IS_WIN)
 +  //if (event.ctrlKey())
 +  //  return false;
-+#if !defined(OS_WIN)
++#if !BUILDFLAG(IS_WIN)
    // Don't insert ASCII character if ctrl w/o alt or meta is on.
    // On Mac, we should ignore events when meta is on (Command-<x>).
    if (ch < 0x80) {
      if (event.ctrlKey() && !event.altKey())
        return false;
--#if defined(OS_MAC)
-+#if defined(OS_MAC) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
      if (event.metaKey())
        return false;
  #endif
+diff --git a/ui/base/window_open_disposition.cc b/ui/base/window_open_disposition.cc
+index 0c3708f6b..8eed78e74 100644
 --- a/ui/base/window_open_disposition.cc
 +++ b/ui/base/window_open_disposition.cc
-@@ -17,7 +17,7 @@ WindowOpenDisposition DispositionFromCli
+@@ -17,7 +17,7 @@ WindowOpenDisposition DispositionFromClick(
      bool shift_key,
      WindowOpenDisposition disposition_for_current_tab) {
    // MacOS uses meta key (Command key) to spawn new tabs.
--#if defined(OS_APPLE)
-+#if defined(OS_APPLE) || defined(OS_LINUX)
+-#if BUILDFLAG(IS_APPLE)
++#if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_LINUX)
    if (middle_button || meta_key)
  #else
    if (middle_button || ctrl_key)
+diff --git a/ui/events/base_event_utils.cc b/ui/events/base_event_utils.cc
+index 294b52d76..104976d7a 100644
 --- a/ui/events/base_event_utils.cc
 +++ b/ui/events/base_event_utils.cc
-@@ -23,6 +23,8 @@ const int kSystemKeyModifierMask = EF_AL
- #elif defined(OS_APPLE)
+@@ -20,7 +20,7 @@ namespace {
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
+ const int kSystemKeyModifierMask = EF_ALT_DOWN | EF_COMMAND_DOWN;
+-#elif BUILDFLAG(IS_APPLE)
++#elif BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_LINUX)
  // Alt modifier is used to input extended characters on Mac.
  const int kSystemKeyModifierMask = EF_COMMAND_DOWN;
-+#elif defined(OS_LINUX)
-+const int kSystemKeyModifierMask = EF_COMMAND_DOWN;
  #else
- const int kSystemKeyModifierMask = EF_ALT_DOWN;
- #endif  // !BUILDFLAG(IS_CHROMEOS_ASH) && !defined(OS_APPLE)
+diff --git a/ui/events/event_constants.h b/ui/events/event_constants.h
+index 5a7dfef91..7896ea956 100644
 --- a/ui/events/event_constants.h
 +++ b/ui/events/event_constants.h
-@@ -50,7 +50,9 @@ enum EventFlags {
- #if defined(OS_APPLE)
+@@ -52,7 +52,7 @@ enum EventFlags {
+ #if BUILDFLAG(IS_APPLE)
    EF_PLATFORM_ACCELERATOR = EF_COMMAND_DOWN,
  #else
 -  EF_PLATFORM_ACCELERATOR = EF_CONTROL_DOWN,
-+  //EF_PLATFORM_ACCELERATOR = EF_CONTROL_DOWN,
-+  // TODO(hparadiz): Build Configurable EF_PLATFORM_ACCELERATOR from chrome://flags
 +  EF_PLATFORM_ACCELERATOR = EF_COMMAND_DOWN,
  #endif
  };
  
+diff --git a/ui/views/controls/textfield/textfield.cc b/ui/views/controls/textfield/textfield.cc
+index 3d831cf69..c08768dcd 100644
 --- a/ui/views/controls/textfield/textfield.cc
 +++ b/ui/views/controls/textfield/textfield.cc
-@@ -240,9 +240,9 @@ Textfield::Textfield()
+@@ -241,9 +241,9 @@ Textfield::Textfield()
    // These allow BrowserView to pass edit commands from the Chrome menu to us
    // when we're focused by simply asking the FocusManager to
    // ProcessAccelerator() with the relevant accelerators.
@@ -236,12 +255,16 @@
  #endif
  
    // Sometimes there are additional ignored views, such as the View representing
-@@ -2123,46 +2123,47 @@ ui::TextEditCommand Textfield::GetComman
+@@ -2118,7 +2118,7 @@ ui::TextEditCommand Textfield::GetCommandForKeyEvent(
+     return ui::TextEditCommand::INVALID_COMMAND;
+ 
+   const bool shift = event.IsShiftDown();
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_LINUX)
+   const bool command = event.IsCommandDown();
  #endif
    const bool control = event.IsControlDown() || event.IsCommandDown();
-   const bool alt = event.IsAltDown() || event.IsAltGrDown();
-+  const bool command = event.IsCommandDown();
-   switch (event.key_code()) {
+@@ -2127,42 +2127,42 @@ ui::TextEditCommand Textfield::GetCommandForKeyEvent(
      case ui::VKEY_Z:
        if (control && !shift && !alt)
          return ui::TextEditCommand::UNDO;
@@ -294,7 +317,7 @@
                       : ui::TextEditCommand::MOVE_LEFT_AND_MODIFY_SELECTION;
      case ui::VKEY_HOME:
        if (shift) {
-@@ -2233,12 +2234,12 @@ ui::TextEditCommand Textfield::GetComman
+@@ -2233,12 +2233,12 @@ ui::TextEditCommand Textfield::GetCommandForKeyEvent(
        if (shift && control)
          return ui::TextEditCommand::DELETE_TO_END_OF_LINE;
  #endif
