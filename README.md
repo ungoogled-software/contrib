@@ -2,6 +2,13 @@
 
 A collection of community contributions for [ungoogled-chromium](https://github.com/Eloston/ungoogled-chromium). Inspired by [this blog post by Drew DeVault](https://drewdevault.com/2020/06/06/Add-a-contrib-directory.html)
 
+## Layout
+
+All docker-related things are in [`/docker`](/docker) and are mostly intended to move ungoogled-chromium towards a more reproducible build system. 
+You can easily build ungoogled-chromium in a containerized (or remote) environment using the tools in [`/docker`](/docker).
+
+Further information can be found at [`/docker/README.md`](/docker/README.md).
+
 ## Motivation
 
 The target audience includes those who maintain their own ungoogled-chromium-based browsers. Some potential use cases include:
